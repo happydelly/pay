@@ -1,6 +1,8 @@
 package com.imooc.pay.controller;
 
+import com.imooc.pay.pojo.PayInfo;
 import com.imooc.pay.service.IPayService;
+import com.lly835.bestpay.config.WxPayConfig;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.model.PayResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,9 @@ public class PayController {
     @Autowired
     private IPayService payService;
 
+    @Autowired
+    private WxPayConfig wxPayConfig;
+
     @GetMapping("/create")
     public ModelAndView create(@RequestParam("orderId") String orderId,
                                @RequestParam("amount") BigDecimal amount,
@@ -29,12 +34,14 @@ public class PayController {
         Map<String,String> map = new HashMap<>();
         if(bestPayTypeEnum == BestPayTypeEnum.WXPAY_NATIVE){
             map.put("codeUrl",response.getCodeUrl());
+            map.put("orderId",orderId);
+            map.put("returnUrl",wxPayConfig.getReturnUrl());
             return  new ModelAndView("createForWxNative",map);
         }else if(bestPayTypeEnum == BestPayTypeEnum.ALIPAY_PC){
             map.put("body",response.getBody());
             return  new ModelAndView("createForAlipayPc",map);
         }
-        throw  new RuntimeException("暂不支持的支付类型");
+        throw  new RuntimeException("暂不支持的支付类型 ");
     }
 
     @PostMapping("/notify")
@@ -42,6 +49,13 @@ public class PayController {
     public String asyncNotify(@RequestBody String notifyData){
         log.info("notifyData={}",notifyData);
         return payService.asyncNotify(notifyData);
+    }
+
+    @GetMapping("queryByOrderId")
+    @ResponseBody
+    public PayInfo queryByOrderId(@RequestParam("orderId") String orderid){
+        log.info("查询支付记录....");
+        return payService.queryByOrderId(orderid);
     }
 
 }

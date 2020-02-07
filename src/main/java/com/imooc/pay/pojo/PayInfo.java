@@ -31,7 +31,5 @@ public class PayInfo {
         this.payPlatform = payPlatform;
         this.platformStatus = platformStatus;
         this.payAmount = payAmount;
-        this.createTime = new Date();
-        this.updateTime = this.createTime;
     }
 }

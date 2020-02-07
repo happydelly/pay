@@ -1,5 +1,6 @@
 package com.imooc.pay.service;
 
+import com.imooc.pay.pojo.PayInfo;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.model.PayResponse;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,4 +19,6 @@ public interface IPayService {
      * @param notifyData
      */
     String asyncNotify( String notifyData);
+
+    PayInfo queryByOrderId(String orderid);
 }
